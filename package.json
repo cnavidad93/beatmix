@@ -4,7 +4,7 @@
   "description": "Share your local music to your friends and listen it synchronized",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -18,6 +18,8 @@
   "homepage": "https://github.com/cnavidad93/beatmix#readme",
   "dependencies": {
     "express": "^4.16.2",
+    "leveldown": "^2.1.1",
+    "levelup": "^2.0.1",
     "socket.io": "^2.0.4"
   },
   "devDependencies": {
