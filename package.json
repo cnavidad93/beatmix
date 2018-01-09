@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/cnavidad93/beatmix/issues"
   },
-  "homepage": "https://github.com/cnavidad93/beatmix#readme"
+  "homepage": "https://github.com/cnavidad93/beatmix#readme",
+  "dependencies": {
+    "express": "^4.16.2"
+  }
 }
