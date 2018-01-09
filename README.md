@@ -3,10 +3,13 @@ Beatmix is an application that easily allows you to share your local music files
 As simple as create your own room, invite your friends and play your music. While you are the host of a room all the actions that you do on the player (play, pause, stop..) will be reflected to your friends player in real time.
 
 ## Get started
-
+Set up: 
 ```bash
-$ npm install
 $ cd beatmix/
+$ npm install
+```
+Run server:
+```bash
 $ node server
 ```
 
