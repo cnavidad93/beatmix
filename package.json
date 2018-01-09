@@ -1,0 +1,19 @@
+{
+  "name": "beatmix",
+  "version": "1.0.0",
+  "description": "Share your local music to your friends and listen it synchronized",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cnavidad93/beatmix.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cnavidad93/beatmix/issues"
+  },
+  "homepage": "https://github.com/cnavidad93/beatmix#readme"
+}
