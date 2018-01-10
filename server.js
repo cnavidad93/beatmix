@@ -15,6 +15,6 @@ http.listen(conf.http_port, () => {
 });
 
 io.on('connection', (socket) => {
-  rooms.run(socket);
-  users.run(socket);
+  rooms.run(socket, io);
+  users.run(socket, io);
 });

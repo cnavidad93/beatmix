@@ -11,15 +11,20 @@ socket.on('room_joined', (room) => {
   let $usersRoom = document.getElementById('users-room');
 
   joined = true;
-  totalUser++;
   $urlRoom.innerHTML = `@${room.name}`;
+  totalUser = room.totalUser
   $usersRoom.innerHTML = totalUser;
 
   changeView();
-  console.log('joined to room: ', room.name);
+  console.log('joined to room: ', room);
 });
 
 socket.on('notification', (message) => {
+  if(message === 'joined_user') {
+    totalUser = totalUser + 1;
+    let $usersRoom = document.getElementById('users-room');
+    $usersRoom.innerHTML = totalUser;
+  }
   console.log(message);
 });
 

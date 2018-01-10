@@ -3,7 +3,7 @@ const users = {
   run: run
 };
 
-function run(socket){
+function run(socket, io){
 
   socket.on('log_in', data => {
     console.log(`Logged as ${socket.id}`);
@@ -12,7 +12,7 @@ function run(socket){
       id: socket.id
     };
 
-    db.put(socket.id, _user, function (err) {
+    db.saveUser(socket.id, _user, function (err) {
       if (err) return console.log('Ooops!', err);
     });
   });
