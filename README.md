@@ -1,5 +1,5 @@
 # beatmix
-Beatmix is an application that easily allows you to share your local music files with your friends and lisen it with they synchronized.
+Beatmix is an application that easily allows you to share your local music files and to listen it synchronized with your friends.
 As simple as create your own room, invite your friends and play your music. While you are the host of a room all the actions that you do on the player (play, pause, stop..) will be reflected to your friends player in real time.
 
 ## Get started
