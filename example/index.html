@@ -3,17 +3,23 @@
     <title>Beatmix Example</title>
     <meta charset="utf-8">
     <link href="style.css" rel="stylesheet">
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
     <script src="index.js"></script>
   </head>
   <body>
+    <video id="remoteVideo" autoplay></video>
+
     <div id="wrap">
       <div id="room-page" class="fade-out">
         <div id="info">
           <span>Room <span id="url-room"></span></span>
           <span id="users-room">0</span>
         </div>
-        <div id="content"></div>
+        <div id="content">
+          <video id="localVideo" autoplay muted></video>
+          <video id="remoteVideo" autoplay></video>
+        </div>
         <div id="room-control">
           <button onclick="leaveRoom()">Leave room</button>
         </div>

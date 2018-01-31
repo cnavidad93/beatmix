@@ -1,6 +1,12 @@
 const socket = io(`http://${window.location.hostname}:3010`);
+const configuration = {
+ iceServers: [{
+   urls: 'stun:stun.l.google.com:19302' // Google's public STUN server
+ }]
+};
 let joined = false;
 let totalUser = 0;
+let pc;
 
 socket.emit('log_in', {
   name: 'eudago'
@@ -17,6 +23,7 @@ socket.on('room_joined', (room) => {
 
   changeView();
   console.log('joined to room: ', room);
+  if(room.totalUser > 1) connectWebRTC(room.webrtc);
 });
 
 socket.on('notification', (message) => {
@@ -28,9 +35,15 @@ socket.on('notification', (message) => {
   console.log(message);
 });
 
+socket.on('candidate', (message) => {
+  pc.addIceCandidate(
+    new RTCIceCandidate(message.candidate), (r) => {console.log(err)}, (err) => {console.log(err)}
+  );
+});
+
 function createRoom() {
   if(!joined) {
-    socket.emit('create_room');
+    startWebRTC();
   }
 }
 function leaveRoom() {
@@ -51,6 +64,9 @@ function joinRoom() {
   }
 }
 
+function sendWebRtcDescription(debug) {
+  socket.emit('webrtc_description', d);
+}
 
 function validateInput(elm){
   let $input = document.getElementById('room-name').value;
@@ -66,4 +82,64 @@ function changeView(){
 
   document.getElementById('login-page').classList.toggle('fade-in');
   document.getElementById('login-page').classList.toggle('fade-out');
+}
+
+function startWebRTC() {
+ pc = new RTCPeerConnection(configuration);
+ pc.onicecandidate = event => {
+   if (event.candidate) {
+     console.log({'candidate': event.candidate});
+   }
+ };
+ pc.onnegotiationneeded = () => {
+   pc.createOffer()
+     .then(localDescCreated)
+     .catch((err) => {
+       console.log(err)
+     });
+ }
+ navigator.mediaDevices.getUserMedia({
+   audio: true,
+   video: true,
+ }).then(stream => {
+   localVideo.srcObject = stream;
+   pc.addStream(stream);
+ }, (err) => {
+   console.log(err);
+ });
+}
+
+function connectWebRTC(message) {
+  pc = new RTCPeerConnection(configuration);
+  pc.onaddstream = event => {
+    remoteVideo.srcObject = event.stream;
+  };
+  pc.onicecandidate = event => {
+    if (event.candidate) {
+      console.log({'candidate': event.candidate});
+    }
+  };
+
+  pc.setRemoteDescription(new RTCSessionDescription(message.sdp), () => {
+    if (pc.remoteDescription.type === 'offer') {
+      pc.createAnswer()
+      .then(localDescCreated)
+      .catch((err) => {
+        console.log(err);
+      });
+    }
+  }, (err) => {
+    console.log(err);
+  });
+}
+
+function localDescCreated(desc) {
+  pc.setLocalDescription(
+    desc,
+    () => {
+      console.log({'sdp': pc.localDescription})
+      socket.emit('create_room', {'sdp': pc.localDescription});
+    },
+    (err) => {console.log(err)}
+  );
 }

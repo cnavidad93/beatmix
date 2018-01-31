@@ -14,8 +14,10 @@ function run(socket, io){
         count_rooms++;
         _admin.room = `beatsroom_${count_rooms}`;
         _room.id = `beatsroom_${count_rooms}`;
+        _room.webrtc = data;
         _room.name = `beatsroom_${count_rooms}`;
         _room.totalUser = 1;
+        _room.admin = socket.id;
         db.saveRoom(`beatsroom_${count_rooms}`, _room).then(() => {
           socket.join(`beatsroom_${count_rooms}`);
           socket.emit('room_joined', _room);
@@ -52,6 +54,9 @@ function run(socket, io){
     //socket.leave(_room.id);
   });
 
+  socket.on('send_candidate', () => {
+
+  });
 }
 
 module.exports = rooms;

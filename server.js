@@ -5,6 +5,7 @@ const http    = require('http').Server(app);
 const io      = require('socket.io')({ transports: ['websocket'] });
 const rooms   = require('./actions/rooms');
 const users   = require('./actions/users');
+const webrtc  = require('./actions/webrtc');
 
 io.attach(conf.socket_port);
 
@@ -17,4 +18,5 @@ http.listen(conf.http_port, () => {
 io.on('connection', (socket) => {
   rooms.run(socket, io);
   users.run(socket, io);
+  webrtc.run(socket, io);
 });
