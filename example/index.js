@@ -35,10 +35,22 @@ socket.on('notification', (message) => {
   console.log(message);
 });
 
-socket.on('candidate', (message) => {
-  pc.addIceCandidate(
-    new RTCIceCandidate(message.candidate), (r) => {console.log(err)}, (err) => {console.log(err)}
-  );
+socket.on('webrtc_message_client', (message) => {
+  if (message.sdp) {
+    pc.setRemoteDescription(new RTCSessionDescription(message.sdp), () => {
+    }, (err) => {
+      console.log(err)
+    });
+  }
+  else if (message.candidate) {
+    pc.addIceCandidate(
+      new RTCIceCandidate(message.candidate), (r) => {
+        console.log(r)
+      }, (err) => {
+        console.log(err)
+      }
+    );
+  }
 });
 
 function createRoom() {
@@ -88,7 +100,7 @@ function startWebRTC() {
  pc = new RTCPeerConnection(configuration);
  pc.onicecandidate = event => {
    if (event.candidate) {
-     console.log({'candidate': event.candidate});
+     //console.log({'candidate': event.candidate});
    }
  };
  pc.onnegotiationneeded = () => {
@@ -116,14 +128,14 @@ function connectWebRTC(message) {
   };
   pc.onicecandidate = event => {
     if (event.candidate) {
-      console.log({'candidate': event.candidate});
+      socket.emit('webrtc_message', {'candidate': event.candidate});
     }
   };
 
   pc.setRemoteDescription(new RTCSessionDescription(message.sdp), () => {
     if (pc.remoteDescription.type === 'offer') {
       pc.createAnswer()
-      .then(localDescCreated)
+      .then(localDescCreatedSend)
       .catch((err) => {
         console.log(err);
       });
@@ -133,11 +145,20 @@ function connectWebRTC(message) {
   });
 }
 
+function localDescCreatedSend(desc) {
+  pc.setLocalDescription(
+    desc,
+    () => {
+      socket.emit('webrtc_message', {'sdp': pc.localDescription});
+    },
+    (err) => {console.log(err)}
+  );
+}
+
 function localDescCreated(desc) {
   pc.setLocalDescription(
     desc,
     () => {
-      console.log({'sdp': pc.localDescription})
       socket.emit('create_room', {'sdp': pc.localDescription});
     },
     (err) => {console.log(err)}

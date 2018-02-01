@@ -6,7 +6,7 @@ let count_rooms = 0;
 
 function run(socket, io){
 
-  socket.on('create_room', data => {
+  socket.on('create_room', sdp => {
     let _room = {};
     db.getUser(socket.id).then((user) => {
       let _admin = user;
@@ -14,7 +14,7 @@ function run(socket, io){
         count_rooms++;
         _admin.room = `beatsroom_${count_rooms}`;
         _room.id = `beatsroom_${count_rooms}`;
-        _room.webrtc = data;
+        _room.webrtc = sdp;
         _room.name = `beatsroom_${count_rooms}`;
         _room.totalUser = 1;
         _room.admin = socket.id;
@@ -39,9 +39,12 @@ function run(socket, io){
           socket.join(_room);
           socket.emit('room_joined', _room);
 
-          user.room = room;
-          io.in(room).emit('notification', 'joined_user');
+          user.roomId = _room.id;
+          return db.saveUser(socket.id, user)
         }
+      })
+      .then(() => {
+        io.in(room).emit('notification', 'joined_user');
       });
     })
     .catch((error) => {
@@ -54,8 +57,11 @@ function run(socket, io){
     //socket.leave(_room.id);
   });
 
-  socket.on('send_candidate', () => {
-
+  socket.on('webrtc_message', (candidate) => {
+    db.getUserRoom(socket.id).then((room) => {
+      console.log('admin:' + room.admin);
+      io.to(room.admin).emit('webrtc_message_client', candidate);
+    });
   });
 }
 
