@@ -4,7 +4,7 @@ const auth = {
   login: (req, res) => {
     //https://github.com/firebase/firebase-admin-node/issues/210
     res.json({
-      logged: true;
+      logged: true
     });
   },
   logout: (req, res) => {
